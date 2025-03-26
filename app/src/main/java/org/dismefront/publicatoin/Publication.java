@@ -1,5 +1,8 @@
 package org.dismefront.publicatoin;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.dismefront.payment.Payment;
@@ -16,6 +19,7 @@ public class Publication {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
     @Column(name = "publication_type", nullable = false)
@@ -42,10 +46,12 @@ public class Publication {
     @Column(name = "living_area")
     private Double livingArea;
 
-    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Photo> photos;
 
-    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Payment> payments;
 
     @Column(name = "publication_date", nullable = false)
@@ -53,5 +59,6 @@ public class Publication {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User createdBy;
 }

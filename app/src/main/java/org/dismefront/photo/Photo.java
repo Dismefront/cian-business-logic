@@ -1,5 +1,7 @@
 package org.dismefront.photo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.dismefront.publicatoin.Publication;
@@ -11,6 +13,7 @@ public class Photo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
     @Column(name = "title", nullable = false)
@@ -21,5 +24,6 @@ public class Photo {
 
     @ManyToOne
     @JoinColumn(name = "publication_id", nullable = false)
+    @JsonBackReference
     private Publication publication;
 }
