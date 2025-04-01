@@ -67,4 +67,25 @@ public class PublicationService {
         return publicationRepository.save(publication);
     }
 
+    public Publication rejectPublication(Long id) {
+        Publication publication = publicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Publication not found"));
+        publication.setIsApproved(false);
+        return publicationRepository.save(publication);
+    }
+
+    public Publication deactivatePublication(Long id) {
+        Publication publication = publicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Publication not found"));
+        publication.setIsActive(false);
+        return publicationRepository.save(publication);
+    }
+
+    public Publication activatePublication(Long id) {
+        Publication publication = publicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Publication not found"));
+        publication.setIsActive(true);
+        return publicationRepository.save(publication);
+    }
+
 }

@@ -54,6 +54,9 @@ public class Publication {
     @Enumerated(EnumType.STRING)
     private PublicationPriority publicationPriority;
 
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
     @Column(name = "priority_request")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "publication")
     @JsonBackReference
