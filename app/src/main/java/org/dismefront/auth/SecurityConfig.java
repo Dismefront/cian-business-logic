@@ -37,7 +37,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                         (requests) ->
                                 requests
-                                        .requestMatchers("/api/user/register", "/api/user/login")
+                                        .requestMatchers("/api/users/register", "/api/users/login")
                                         .permitAll()
                                         .anyRequest()
                                         .authenticated())
@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .sessionManagement(
                         (session) -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .logout(
-                        logout -> logout.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()).logoutUrl("/api/user/logout"));
+                        logout -> logout.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()).logoutUrl("/api/users/logout"));
 
         return http.build();
     }

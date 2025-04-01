@@ -1,53 +1,62 @@
 package org.dismefront.publicatoin;
 
-import org.dismefront.api.CreatePublicationReq;
-import org.dismefront.payment.Payment;
-import org.dismefront.user.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.dismefront.location.LocationService;
+import org.dismefront.order.dto.OrderPlacement;
+import org.dismefront.photo.Photo;
+import org.dismefront.publicatoin.dto.CreatePublicationRequest;
+import org.dismefront.requests.PaymentRequestService;
+import org.dismefront.user.AppUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.sql.Date;
+import java.util.Objects;
+
 
 @Service
 public class PublicationService {
 
     @Autowired
-    private PublicationRepository publicationRepository;
+    private AppUserDetailsService userService;
 
     @Autowired
-    private UserRepository userRepository;
+    private LocationService locationService;
 
-    public Publication createPublication(CreatePublicationReq request) {
+    @Autowired
+    private PaymentRequestService paymentRequestService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private PublicationRepository publicationRepository;
+
+    public OrderPlacement createPublication(CreatePublicationRequest request, String username) {
+        OrderPlacement orderPlacement = null;
         Publication publication = new Publication();
-
-        publication.setPublicationDate(new Date());
-        publication.setCreatedBy(userRepository.findById(request.getCreatedBy()).orElse(null));
         publication.setPublicationType(request.getPublicationType());
-        publication.setApFloor(request.getApFloor());
-        publication.setApartmentNumber(request.getApartmentNumber());
-        publication.setApartmentType(request.getApartmentType());
-        publication.setLivingArea(request.getLivingArea());
-        publication.setLocation(request.getLocation());
         publication.setRealEstateType(request.getRealEstateType());
-        return publicationRepository.save(publication);
+        publication.setPublicationDate(new Date(System.currentTimeMillis()));
+        publication.setCreatedBy(userService.getByUsername(username));
+        publication.setPublicationPriority(PublicationPriority.STANDARD);
+
+        publication.setLocation(locationService.createLocation(request.getLocation()));
+        request.getPhotos().forEach(photo -> {
+            publication.getPhotos().add(entityManager.getReference(Photo.class, photo.getId()));
+        });
+
+        publication.setIsApproved(false);
+
+        Publication savedPublication = publicationRepository.save(publication);
+
+        PublicationPriority priority = Objects.nonNull(request.getPaymentRequest()) ? request.getPaymentRequest().getRequestedPriority() : null;
+        if (priority != null && priority != PublicationPriority.STANDARD) {
+            request.getPaymentRequest().setPublicationId(savedPublication.getId());
+            orderPlacement = paymentRequestService.createPaymentRequest(request.getPaymentRequest());
+        }
+
+        return orderPlacement;
     }
 
-    public Page<Publication> listPublications(Pageable pageable) {
-        List<Publication> publications = publicationRepository.findAll();
-
-        publications.sort(Comparator
-                .comparingDouble((Publication p) -> p.getPayments().stream().mapToDouble(Payment::getAmount).sum()).reversed()
-                .thenComparing(Publication::getPublicationDate)
-        );
-
-        return publicationRepository.findAll(pageable);
-    }
-
-    public Publication getPublicationById(Long id) {
-        return publicationRepository.findById(id).orElseThrow(() -> new RuntimeException("Publication not found"));
-    }
 }

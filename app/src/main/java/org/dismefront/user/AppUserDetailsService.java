@@ -14,7 +14,17 @@ public class AppUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-        return (User) userRepository.findByPhoneNumber(phoneNumber)
+        return userRepository.findByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with phone number: " + phoneNumber));
+    }
+
+    public User loadUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+    }
+
+    public User getByUsername(String username) {
+        return (User) userRepository.findByPhoneNumber(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with phone number: " + username));
     }
 }

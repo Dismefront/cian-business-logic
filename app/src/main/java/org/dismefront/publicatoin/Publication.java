@@ -1,14 +1,15 @@
 package org.dismefront.publicatoin;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.dismefront.payment.Payment;
+import org.dismefront.location.Location;
 import org.dismefront.photo.Photo;
+import org.dismefront.requests.PaymentRequest;
 import org.dismefront.user.User;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,46 +20,62 @@ public class Publication {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @Column(name = "publication_type", nullable = false)
-    private String publicationType;
+    @Enumerated(EnumType.STRING)
+    private PublicationType publicationType;
 
     @Column(name = "real_estate_type", nullable = false)
-    private String realEstateType;
+    @Enumerated(EnumType.STRING)
+    private RealEstateType realEstateType;
 
-    @Column(name = "location", nullable = false)
-    private String location;
-
-    @Column(name = "ap_floor")
-    private Integer apFloor;
-
-    @Column(name = "number_of_floors")
-    private Integer numberOfFloors;
-
-    @Column(name = "apartment_number")
-    private String apartmentNumber;
-
-    @Column(name = "apartment_type")
-    private String apartmentType;
-
-    @Column(name = "living_area")
-    private Double livingArea;
-
-    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
     @JsonManagedReference
-    private List<Photo> photos;
+    private Location location;
 
-    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "publication")
     @JsonManagedReference
-    private List<Payment> payments;
+    private List<Photo> photos = new ArrayList<>();
 
     @Column(name = "publication_date", nullable = false)
     private Date publicationDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    @JsonManagedReference
     private User createdBy;
+
+    @Column(name = "is_approved")
+    private Boolean isApproved;
+
+    @Column(name = "publication_priority")
+    @Enumerated(EnumType.STRING)
+    private PublicationPriority publicationPriority;
+
+    @Column(name = "priority_request")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "publication")
+    @JsonBackReference
+    private List<PaymentRequest> paymentRequests = new ArrayList<>();
+
+    public Date getExpirationDate() {
+        if (publicationType == PublicationType.DAILY_RENT) {
+            return new Date(publicationDate.getTime() + 365L * 24 * 60 * 60 * 1000);
+        } else if (publicationType == PublicationType.MONTHLY_RENT) {
+            return new Date(publicationDate.getTime() + 150L * 24 * 60 * 60 * 1000);
+        }
+        else if (publicationType == PublicationType.SELL) {
+            return new Date(publicationDate.getTime() + 30L * 24 * 60 * 60 * 1000);
+        }
+        return null;
+    }
+
+    public Boolean isExpired() {
+        Date expirationDate = getExpirationDate();
+        if (expirationDate != null) {
+            return new Date().after(expirationDate);
+        }
+        return false;
+    }
 }

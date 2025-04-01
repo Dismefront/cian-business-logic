@@ -1,5 +1,6 @@
 package org.dismefront.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -18,7 +19,6 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @Column(name = "phone_number", nullable = false, unique = true)
@@ -35,7 +35,7 @@ public class User implements UserDetails {
     private String passwordHash;
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonBackReference
     private List<Publication> publications;
 
     @Override

@@ -19,7 +19,7 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("api/users")
 public class UserController {
 
     @Autowired
@@ -67,10 +67,5 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(403).body("User credentials are incorrect");
         }
-    }
-
-    @GetMapping("/get-users")
-    public ResponseEntity getUsers() {
-        return ResponseEntity.ok().body("userRepository.findAll()");
     }
 }

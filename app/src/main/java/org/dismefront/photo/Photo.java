@@ -13,7 +13,6 @@ public class Photo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @Column(name = "title", nullable = false)
@@ -23,7 +22,7 @@ public class Photo {
     private String s3Key;
 
     @ManyToOne
-    @JoinColumn(name = "publication_id", nullable = false)
+    @JoinColumn(name = "publication_id")
     @JsonBackReference
     private Publication publication;
 }

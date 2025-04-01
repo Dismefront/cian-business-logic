@@ -1,13 +1,12 @@
 package org.dismefront.publicatoin;
 
-import org.dismefront.api.CreatePublicationReq;
+import org.dismefront.moderation.AIModerationService;
+import org.dismefront.publicatoin.dto.CreatePublicationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/publications")
@@ -16,22 +15,12 @@ public class PublicationController {
     @Autowired
     private PublicationService publicationService;
 
+    @Autowired
+    AIModerationService aiModerationService;
+
     @PostMapping("/create")
-    public ResponseEntity createPublication(@RequestBody CreatePublicationReq req) {
-        req.setPublicationDate(new Date());
-        Publication savedPublication = publicationService.createPublication(req);
-        return ResponseEntity.ok(savedPublication);
-    }
+    public ResponseEntity createPublication(@RequestBody CreatePublicationRequest req, Principal principal) {
+        return ResponseEntity.ok(publicationService.createPublication(req, principal.getName()));
 
-    @GetMapping
-    public ResponseEntity<Page<Publication>> listPublications(Pageable pageable) {
-        Page<Publication> publications = publicationService.listPublications(pageable);
-        return ResponseEntity.ok(publications);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Publication> getPublicationById(@PathVariable Long id) {
-        Publication publication = publicationService.getPublicationById(id);
-        return ResponseEntity.ok(publication);
     }
 }

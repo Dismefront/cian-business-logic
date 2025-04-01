@@ -1,6 +1,6 @@
 package org.dismefront.photo;
 
-import org.dismefront.api.CreatePhotoReq;
+import org.dismefront.photo.dto.PhotoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +13,8 @@ public class PhotoController {
     private PhotoService photoService;
 
     @PostMapping
-    public ResponseEntity<Photo> uploadPhoto(@RequestBody CreatePhotoReq req) {
-        Photo savedPhoto = photoService.uploadPhoto(req);
+    public ResponseEntity<Photo> uploadPhoto(@RequestBody PhotoDTO dto) {
+        Photo savedPhoto = photoService.uploadPhoto(dto);
         return ResponseEntity.ok(savedPhoto);
     }
 
