@@ -9,6 +9,7 @@ import org.dismefront.publicatoin.dto.CreatePublicationRequest;
 import org.dismefront.requests.PaymentRequestService;
 import org.dismefront.user.AppUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -57,6 +58,13 @@ public class PublicationService {
         }
 
         return orderPlacement;
+    }
+
+    public Publication approvePublication(Long id) {
+        Publication publication = publicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Publication not found"));
+        publication.setIsApproved(true);
+        return publicationRepository.save(publication);
     }
 
 }

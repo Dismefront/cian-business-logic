@@ -23,4 +23,9 @@ public class PublicationController {
         return ResponseEntity.ok(publicationService.createPublication(req, principal.getName()));
 
     }
+
+    @PutMapping("/approve/{id}")
+    public ResponseEntity<Publication> approvePublication(@PathVariable Long id) {
+        return ResponseEntity.ok(publicationService.approvePublication(id));
+    }
 }
