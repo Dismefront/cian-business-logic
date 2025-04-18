@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.dismefront.location.dto.LocationDTO;
 import org.dismefront.photo.dto.PhotoDTO;
-import org.dismefront.publicatoin.Publication;
-import org.dismefront.publicatoin.PublicationPriority;
 import org.dismefront.publicatoin.PublicationType;
 import org.dismefront.publicatoin.RealEstateType;
 import org.dismefront.requests.dto.PaymentRequestDTO;

@@ -3,6 +3,7 @@ package org.dismefront.publicatoin;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.dismefront.location.LocationService;
+import org.dismefront.moderation.AIModerationService;
 import org.dismefront.order.dto.OrderPlacement;
 import org.dismefront.photo.Photo;
 import org.dismefront.publicatoin.dto.CreatePublicationRequest;
@@ -28,6 +29,9 @@ public class PublicationService {
     @Autowired
     private PaymentRequestService paymentRequestService;
 
+    @Autowired
+    private AIModerationService aiModerationService;
+
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -47,7 +51,7 @@ public class PublicationService {
             publication.getPhotos().add(entityManager.getReference(Photo.class, photo.getId()));
         });
 
-        publication.setIsApproved(false);
+        publication.setIsApproved(aiModerationService.moderatePublication(publication));
 
         Publication savedPublication = publicationRepository.save(publication);
 

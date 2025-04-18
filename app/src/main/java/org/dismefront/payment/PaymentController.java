@@ -1,12 +1,9 @@
 package org.dismefront.payment;
 
-import org.dismefront.api.CreatePaymentReq;
-import org.dismefront.order.OrderStatus;
 import org.dismefront.order.exceptions.OrderNotFoundException;
 import org.dismefront.payment.dto.UserPayRequest;
 import org.dismefront.payment.exceptions.InsufficientFundsException;
 import org.dismefront.payment.exceptions.UnprocessablePaymentException;
-import org.dismefront.requests.PaymentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

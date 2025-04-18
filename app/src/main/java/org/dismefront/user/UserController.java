@@ -2,8 +2,7 @@ package org.dismefront.user;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.dismefront.api.UserLoginReq;
-import org.dismefront.api.UserRegisterReq;
+import org.dismefront.user.dto.UserData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity registerUser(@RequestBody UserRegisterReq req, HttpServletRequest request) {
+    public ResponseEntity registerUser(@RequestBody UserData req, HttpServletRequest request) {
         try {
             User user = new User();
             user.setName(req.getName());
@@ -60,7 +59,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody UserLoginReq loginRequest, HttpServletRequest request) {
+    public ResponseEntity login(@RequestBody UserData loginRequest, HttpServletRequest request) {
         try {
             authenticate(loginRequest.getPhoneNumber(), loginRequest.getPassword(), request);
             return ResponseEntity.ok().body("User logged in successfully!");
