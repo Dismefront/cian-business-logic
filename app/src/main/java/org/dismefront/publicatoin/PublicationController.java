@@ -1,6 +1,8 @@
 package org.dismefront.publicatoin;
 
 import org.dismefront.publicatoin.dto.CreatePublicationRequest;
+import org.dismefront.requests.dto.UpgradePriorityRequestDTO;
+import org.dismefront.requests.exceptions.CannotUpgradePriorityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,16 @@ public class PublicationController {
     @PostMapping("/create")
     public ResponseEntity createPublication(@RequestBody CreatePublicationRequest req, Principal principal) {
         return ResponseEntity.ok(publicationService.createPublication(req, principal.getName()));
+    }
+
+    @PutMapping("/upgrade-priority/{id}")
+    public ResponseEntity upgradePublicationPriority(@PathVariable Long id, @RequestBody UpgradePriorityRequestDTO body) {
+        try {
+            return ResponseEntity.ok(publicationService.upgradePublicationPriority(id, body.getPriority()));
+        }
+        catch (CannotUpgradePriorityException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/approve/{id}")
