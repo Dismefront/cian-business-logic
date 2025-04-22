@@ -4,6 +4,7 @@ import org.dismefront.photo.dto.PhotoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,6 +22,10 @@ public class PhotoService {
 
     public Photo getPhotoById(Long id) {
         return photoRepository.findById(id).orElseThrow(() -> new RuntimeException("Photo not found"));
+    }
+
+    public List<Photo> getAllPhotos() {
+        return photoRepository.findAll();
     }
 
 }
