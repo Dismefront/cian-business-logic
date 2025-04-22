@@ -8,9 +8,10 @@ import org.dismefront.order.dto.OrderPlacement;
 import org.dismefront.photo.Photo;
 import org.dismefront.publicatoin.dto.CreatePublicationRequest;
 import org.dismefront.requests.PaymentRequestService;
+import org.dismefront.requests.dto.PaymentRequestDTO;
+import org.dismefront.requests.exceptions.CannotUpgradePriorityException;
 import org.dismefront.user.AppUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -34,6 +35,7 @@ public class PublicationService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
     @Autowired
     private PublicationRepository publicationRepository;
 
@@ -62,6 +64,19 @@ public class PublicationService {
         }
 
         return orderPlacement;
+    }
+
+    public OrderPlacement upgradePublicationPriority(Long id, PublicationPriority priority) {
+        Publication publication = publicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Publication not found"));
+        if (publication.getPublicationPriority().ordinal() >= priority.ordinal()) {
+            throw new CannotUpgradePriorityException("Cannot upgrade to a lower or equal priority");
+        }
+        PaymentRequestDTO paymentRequestDTO = new PaymentRequestDTO();
+        paymentRequestDTO.setPublicationId(id);
+        paymentRequestDTO.setRequestedPriority(priority);
+
+        return paymentRequestService.createPaymentRequest(paymentRequestDTO);
     }
 
     public Publication approvePublication(Long id) {

@@ -7,6 +7,9 @@ import org.dismefront.payment.dto.UserPayRequest;
 import org.dismefront.payment.exceptions.UnprocessablePaymentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 
 @Service
@@ -18,18 +21,35 @@ public class PaymentService {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    PlatformTransactionManager transactionManager;
+
     public OrderStatus createPayment(UserPayRequest req) throws Exception {
-        Payment payment = new Payment();
-        payment.setOrderUUID(req.getOrderUUID());
-        payment.setAmount(req.getAmount());
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("createPaymentTransaction");
+        def.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
 
-        if (paymentRepository.findByOrderUUID(req.getOrderUUID()) != null) {
-            throw new UnprocessablePaymentException("Payment has already been processed for this order");
+        TransactionStatus txStatus = transactionManager.getTransaction(def);
+
+        try {
+            Payment payment = new Payment();
+            payment.setOrderUUID(req.getOrderUUID());
+            payment.setAmount(req.getAmount());
+
+            if (paymentRepository.findByOrderUUID(req.getOrderUUID()) != null) {
+                throw new UnprocessablePaymentException("Payment has already been processed for this order");
+            }
+            paymentRepository.save(payment);
+
+            Order order = orderService.attachPayment(payment);
+
+            transactionManager.commit(txStatus);
+
+            return order.getStatus();
         }
-        paymentRepository.save(payment);
-
-        Order order = orderService.attachPayment(payment);
-
-        return order.getStatus();
+        catch (Exception e) {
+            transactionManager.rollback(txStatus);
+            throw e;
+        }
     }
 }
