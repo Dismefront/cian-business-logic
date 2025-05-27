@@ -21,13 +21,13 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("org.projectlombok:lombok")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-        implementation("org.springframework.boot:spring-boot-starter-security")
         annotationProcessor("org.projectlombok:lombok")
         implementation("org.postgresql:postgresql")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         implementation("com.atomikos:transactions-jta:6.0.0")
         implementation("com.atomikos:transactions-jdbc:6.0.0")
         implementation("org.springframework.boot:spring-boot-starter-jta-atomikos:2.7.18")
+        implementation("org.springframework.kafka:spring-kafka")
     }
 
     testing {
