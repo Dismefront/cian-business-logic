@@ -1,4 +1,4 @@
-package org.dismefront.payment.exceptions;
+package org.dismefront.order.exceptions;
 
 public class InsufficientFundsException extends Exception {
     public InsufficientFundsException(String message) {

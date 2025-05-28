@@ -4,4 +4,5 @@ public enum OrderStatus {
     PENDING,
     RESOLVED,
     REJECTED,
+    TIMED_OUT
 }
