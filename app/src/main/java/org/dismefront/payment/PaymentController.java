@@ -1,8 +1,8 @@
 package org.dismefront.payment;
 
+import org.dismefront.order.exceptions.InsufficientFundsException;
 import org.dismefront.order.exceptions.OrderNotFoundException;
 import org.dismefront.payment.dto.UserPayRequest;
-import org.dismefront.payment.exceptions.InsufficientFundsException;
 import org.dismefront.payment.exceptions.UnprocessablePaymentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class PaymentController {
             return ResponseEntity.status(422).body(e.getMessage());
         }
         catch (Exception e) {
-            return ResponseEntity.status(500).body("Internal server error");
+            return ResponseEntity.status(500).body("There was an error processing your payment");
         }
 
         return ResponseEntity.status(200).body("Payment accepted successfully");
