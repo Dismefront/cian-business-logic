@@ -1,24 +1,23 @@
 package com.rosreestr;
 
-import jakarta.resource.ResourceException;
+
 import jakarta.resource.spi.ConnectionManager;
 
-public class RRConnectionFactoryImpl {
+public class RRConnectionFactoryImpl implements RRConnectionFactory {
 
     private final RRManagedConnectionFactory mcf;
-    private final ConnectionManager cxManager;
+    private final ConnectionManager cm;
 
-    public RRConnectionFactoryImpl(RRManagedConnectionFactory mcf, ConnectionManager cxManager) {
+    public RRConnectionFactoryImpl(RRManagedConnectionFactory mcf, ConnectionManager cm) {
         this.mcf = mcf;
-        this.cxManager = cxManager;
+        this.cm = cm;
     }
 
-    public RRConnection getConnection() throws ResourceException {
-        if (cxManager != null) {
-            return (RRConnection) cxManager.allocateConnection(mcf, null);
-        }
-        else {
-            return (RRConnection) mcf.createManagedConnection(null, null).getConnection(null, null);
+    public RRConnection getConnection() {
+        try {
+            return (RRConnection) cm.allocateConnection(mcf, null);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to get connection", e);
         }
     }
 

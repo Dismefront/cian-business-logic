@@ -1,8 +1,42 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<connector xmlns="https://jakarta.ee/xml/ns/jca" version="1.7">
-    <display-name>Rosreestr RA</display-name>
-    <vendor-name>Example</vendor-name>
-    <eis-type>Socket</eis-type>
+<?xml version="1.0" encoding="UTF-8"?>
+<connector xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+           http://xmlns.jcp.org/xml/ns/javaee/connector_1_7.xsd"
+           version="1.7">
+
+    <display-name>Rosreestr Resource Adapter</display-name>
+    <vendor-name>YourCompany</vendor-name>
+    <eis-type>Rosreestr</eis-type>
     <resourceadapter-version>1.0</resourceadapter-version>
-    <transaction-support>NoTransaction</transaction-support>
+
+    <resourceadapter>
+        <resourceadapter-class>com.rosreestr.RRResourceAdapter</resourceadapter-class>
+
+        <config-property>
+            <config-property-name>host</config-property-name>
+            <config-property-type>java.lang.String</config-property-type>
+            <config-property-value>localhost</config-property-value>
+            <config-property-ignore>false</config-property-ignore>
+            <config-property-confidential>false</config-property-confidential>
+        </config-property>
+
+        <config-property>
+            <config-property-name>port</config-property-name>
+            <config-property-type>java.lang.Integer</config-property-type>
+            <config-property-value>8140</config-property-value>
+            <config-property-ignore>false</config-property-ignore>
+            <config-property-confidential>false</config-property-confidential>
+        </config-property>
+
+        <outbound-resourceadapter>
+            <connection-definition>
+                <managedconnectionfactory-class>com.rosreestr.RRManagedConnectionFactory</managedconnectionfactory-class>
+                <connectionfactory-interface>com.rosreestr.RRConnectionFactory</connectionfactory-interface>
+                <connectionfactory-impl-class>com.rosreestr.RRConnectionFactoryImpl</connectionfactory-impl-class>
+                <connection-interface>com.rosreestr.RRConnection</connection-interface>
+                <connection-impl-class>com.rosreestr.RRConnectionImpl</connection-impl-class>
+            </connection-definition>
+        </outbound-resourceadapter>
+    </resourceadapter>
 </connector>

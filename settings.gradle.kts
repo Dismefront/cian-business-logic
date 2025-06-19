@@ -14,3 +14,4 @@ rootProject.name = "cian-business-logic"
 include("app")
 include("orders-service")
 include("shared")
+include("RosreestrRA")

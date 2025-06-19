@@ -5,47 +5,31 @@ import jakarta.resource.spi.*;
 
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RRManagedConnection implements ManagedConnection {
 
-    private Socket socket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private final RRConnectionImpl connection;
+    private final List<ConnectionEventListener> listeners = new ArrayList<>();
 
-    public RRManagedConnection() throws ResourceException {
+    public RRManagedConnection(String host, int port) throws ResourceException {
         try {
-            this.socket = new Socket("localhost", 8140);
-            this.out = new PrintWriter(socket.getOutputStream(), true);
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
+            this.connection = new RRConnectionImpl(host, port);
+        } catch (Exception e) {
             throw new ResourceException("Failed to connect", e);
-        }
-    }
-
-    public String sendToRR(String msg) {
-        out.println(msg);
-        try {
-            return in.readLine();
-        }
-        catch (IOException e) {
-            return "Error";
         }
     }
 
     @Override
     public Object getConnection(Subject subject, ConnectionRequestInfo connectionRequestInfo) throws ResourceException {
-        return new RRConnectionImpl(this);
+        return connection;
     }
 
     @Override
     public void destroy() throws ResourceException {
-
+        connection.close();
     }
 
     @Override
@@ -60,12 +44,12 @@ public class RRManagedConnection implements ManagedConnection {
 
     @Override
     public void addConnectionEventListener(ConnectionEventListener connectionEventListener) {
-
+        listeners.add(connectionEventListener);
     }
 
     @Override
     public void removeConnectionEventListener(ConnectionEventListener connectionEventListener) {
-
+        listeners.remove(connectionEventListener);
     }
 
     @Override

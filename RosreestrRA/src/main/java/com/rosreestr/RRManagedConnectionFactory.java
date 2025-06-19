@@ -1,17 +1,29 @@
 package com.rosreestr;
 
 import jakarta.resource.ResourceException;
-import jakarta.resource.spi.ConnectionManager;
-import jakarta.resource.spi.ConnectionRequestInfo;
-import jakarta.resource.spi.ManagedConnection;
-import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.*;
 
 import javax.security.auth.Subject;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Set;
 
-public class RRManagedConnectionFactory implements ManagedConnectionFactory {
+public class RRManagedConnectionFactory implements ManagedConnectionFactory, Serializable {
+
+    private String host;
+
+    private int port;
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     private PrintWriter logWriter;
+
 
     @Override
     public Object createConnectionFactory(ConnectionManager connectionManager) throws ResourceException {
@@ -25,21 +37,21 @@ public class RRManagedConnectionFactory implements ManagedConnectionFactory {
 
     @Override
     public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo connectionRequestInfo) throws ResourceException {
-        return new RRManagedConnection();
+        return new RRManagedConnection(host, port);
     }
 
     @Override
     public ManagedConnection matchManagedConnections(Set set, Subject subject, ConnectionRequestInfo connectionRequestInfo) throws ResourceException {
-        return (ManagedConnection) set.stream().findFirst().orElse(null);
+        return null;
     }
 
     @Override
     public void setLogWriter(PrintWriter printWriter) throws ResourceException {
-        this.logWriter = printWriter;
+
     }
 
     @Override
     public PrintWriter getLogWriter() throws ResourceException {
-        return logWriter;
+        return null;
     }
 }
