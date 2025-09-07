@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
+    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" 
+    xmlns:camunda="http://camunda.org/schema/1.0/bpmn" 
+    xmlns:di="http://www.omg.org/spec/DD/20100524/DI" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:modeler="http://camunda.org/schema/modeler/1.0" 
+    id="Definitions_OrderPayment" 
+    targetNamespace="http://bpmn.io/schema/bpmn" 
+    exporter="Camunda Modeler" 
+    exporterVersion="5.36.1" 
+    modeler:executionPlatform="Camunda Platform" 
+    modeler:executionPlatformVersion="7.23.0">
+  
+  <bpmn:collaboration id="Collaboration_OrderPayment">
+    <bpmn:participant id="Participant_MainProcess" name="Order Payment Transaction Process" processRef="Process_OrderPayment" />
+    <bpmn:participant id="Participant_NotificationProcess" name="Notification Process" processRef="Process_Notification" />
+    
+    <!-- Message flows between processes -->
+    <bpmn:messageFlow id="MessageFlow_Success" sourceRef="IntermediateThrowEvent_Success" targetRef="IntermediateEvent_SuccessMessage" />
+    <bpmn:messageFlow id="MessageFlow_Failure" sourceRef="IntermediateThrowEvent_Failure" targetRef="IntermediateEvent_FailureMessage" />
+  </bpmn:collaboration>
+  
+  <!-- Main Order Payment Process -->
+  <bpmn:process id="Process_OrderPayment" name="Order Payment Transaction" isExecutable="true" camunda:historyTimeToLive="180">
+    
+    <bpmn:startEvent id="StartEvent_OrderPayment" name="Start Order Process">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="customerName" label="Customer Name" type="string" />
+          <camunda:formField id="orderAmount" label="Order Amount" type="long" />
+          <camunda:formField id="productId" label="Product ID" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_ToCreateOrder</bpmn:outgoing>
+    </bpmn:startEvent>
+    
+    <!-- Service Task: Create Order -->
+    <bpmn:serviceTask id="ServiceTask_CreateOrder" name="Create Order" 
+        camunda:delegateExpression="${createOrderDelegate}">
+      <bpmn:incoming>Flow_ToCreateOrder</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToMakePayment</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- User Task: Make Payment -->
+    <bpmn:userTask id="UserTask_MakePayment" name="Make Payment" 
+        camunda:formRef="Form_MakePayment" camunda:formRefBinding="latest" 
+        camunda:assignee="${customerName}">
+      <bpmn:incoming>Flow_ToMakePayment</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToVerifyPayment</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <!-- Service Task: Payment Receipt Verification -->
+    <bpmn:serviceTask id="ServiceTask_VerifyPayment" name="Payment Receipt Verification" 
+        camunda:delegateExpression="${verifyPaymentDelegate}">
+      <bpmn:incoming>Flow_ToVerifyPayment</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToPaymentGateway</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- Exclusive Gateway: Payment Result -->
+    <bpmn:exclusiveGateway id="Gateway_PaymentResult" name="Payment Successful?">
+      <bpmn:incoming>Flow_ToPaymentGateway</bpmn:incoming>
+      <bpmn:outgoing>Flow_PaymentSuccess</bpmn:outgoing>
+      <bpmn:outgoing>Flow_PaymentFailure</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- Success Path -->
+    <bpmn:serviceTask id="ServiceTask_ProcessSuccess" name="Process Successful Transaction" 
+        camunda:delegateExpression="${processSuccessDelegate}">
+      <bpmn:incoming>Flow_PaymentSuccess</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToSuccessMessage</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- Intermediate Throw Event: Success Message -->
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_Success" name="Send Success Signal">
+      <bpmn:incoming>Flow_ToSuccessMessage</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToSuccessEnd</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_Success" 
+          messageRef="Message_TransactionSuccess" 
+          camunda:delegateExpression="${sendSuccessMessageDelegate}" />
+    </bpmn:intermediateThrowEvent>
+    
+    <!-- Failure Path -->
+    <bpmn:serviceTask id="ServiceTask_ProcessFailure" name="Process Failed Transaction" 
+        camunda:delegateExpression="${processFailureDelegate}">
+      <bpmn:incoming>Flow_PaymentFailure</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToFailureMessage</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- Intermediate Throw Event: Failure Message -->
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_Failure" name="Send Failure Signal">
+      <bpmn:incoming>Flow_ToFailureMessage</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToFailureEnd</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_Failure" 
+          messageRef="Message_TransactionFailure" 
+          camunda:delegateExpression="${sendFailureMessageDelegate}" />
+    </bpmn:intermediateThrowEvent>
+    
+    <!-- End Events -->
+    <bpmn:endEvent id="EndEvent_Success" name="Transaction Completed Successfully">
+      <bpmn:incoming>Flow_ToSuccessEnd</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <bpmn:endEvent id="EndEvent_Failure" name="Transaction Failed">
+      <bpmn:incoming>Flow_ToFailureEnd</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_TransactionFailed" 
+          errorRef="Error_TransactionFailed" />
+    </bpmn:endEvent>
+    
+    <!-- Sequence Flows -->
+    <bpmn:sequenceFlow id="Flow_ToCreateOrder" sourceRef="StartEvent_OrderPayment" targetRef="ServiceTask_CreateOrder" />
+    <bpmn:sequenceFlow id="Flow_ToMakePayment" sourceRef="ServiceTask_CreateOrder" targetRef="UserTask_MakePayment" />
+    <bpmn:sequenceFlow id="Flow_ToVerifyPayment" sourceRef="UserTask_MakePayment" targetRef="ServiceTask_VerifyPayment" />
+    <bpmn:sequenceFlow id="Flow_ToPaymentGateway" sourceRef="ServiceTask_VerifyPayment" targetRef="Gateway_PaymentResult" />
+    
+    <bpmn:sequenceFlow id="Flow_PaymentSuccess" name="Success" sourceRef="Gateway_PaymentResult" targetRef="ServiceTask_ProcessSuccess">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${paymentVerified == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:sequenceFlow id="Flow_PaymentFailure" name="Failure" sourceRef="Gateway_PaymentResult" targetRef="ServiceTask_ProcessFailure">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${paymentVerified == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:sequenceFlow id="Flow_ToSuccessMessage" sourceRef="ServiceTask_ProcessSuccess" targetRef="IntermediateThrowEvent_Success" />
+    <bpmn:sequenceFlow id="Flow_ToFailureMessage" sourceRef="ServiceTask_ProcessFailure" targetRef="IntermediateThrowEvent_Failure" />
+    <bpmn:sequenceFlow id="Flow_ToSuccessEnd" sourceRef="IntermediateThrowEvent_Success" targetRef="EndEvent_Success" />
+    <bpmn:sequenceFlow id="Flow_ToFailureEnd" sourceRef="IntermediateThrowEvent_Failure" targetRef="EndEvent_Failure" />
+    
+  </bpmn:process>
+  
+  <!-- Notification Process -->
+  <bpmn:process id="Process_Notification" name="Transaction Notification Process" isExecutable="true" camunda:historyTimeToLive="180">
+    
+    <!-- Message Start Events -->
+    <bpmn:startEvent id="IntermediateEvent_SuccessMessage" name="Receive Success Message">
+      <bpmn:outgoing>Flow_ToSuccessNotification</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_ReceiveSuccess" 
+          messageRef="Message_TransactionSuccess" />
+    </bpmn:startEvent>
+    
+    <bpmn:startEvent id="IntermediateEvent_FailureMessage" name="Receive Failure Message">
+      <bpmn:outgoing>Flow_ToFailureNotification</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_ReceiveFailure" 
+          messageRef="Message_TransactionFailure" />
+    </bpmn:startEvent>
+    
+    <!-- Notification Tasks -->
+    <bpmn:serviceTask id="ServiceTask_SuccessNotification" name="Handle Success Notification" 
+        camunda:delegateExpression="${successNotificationDelegate}">
+      <bpmn:incoming>Flow_ToSuccessNotification</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToSuccessNotificationEnd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:serviceTask id="ServiceTask_FailureNotification" name="Handle Failure Notification" 
+        camunda:delegateExpression="${failureNotificationDelegate}">
+      <bpmn:incoming>Flow_ToFailureNotification</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToFailureNotificationEnd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- End Events -->
+    <bpmn:endEvent id="EndEvent_SuccessNotification" name="Success Notification Sent">
+      <bpmn:incoming>Flow_ToSuccessNotificationEnd</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <bpmn:endEvent id="EndEvent_FailureNotification" name="Failure Notification Sent">
+      <bpmn:incoming>Flow_ToFailureNotificationEnd</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <!-- Sequence Flows -->
+    <bpmn:sequenceFlow id="Flow_ToSuccessNotification" sourceRef="IntermediateEvent_SuccessMessage" targetRef="ServiceTask_SuccessNotification" />
+    <bpmn:sequenceFlow id="Flow_ToFailureNotification" sourceRef="IntermediateEvent_FailureMessage" targetRef="ServiceTask_FailureNotification" />
+    <bpmn:sequenceFlow id="Flow_ToSuccessNotificationEnd" sourceRef="ServiceTask_SuccessNotification" targetRef="EndEvent_SuccessNotification" />
+    <bpmn:sequenceFlow id="Flow_ToFailureNotificationEnd" sourceRef="ServiceTask_FailureNotification" targetRef="EndEvent_FailureNotification" />
+    
+  </bpmn:process>
+  
+  <!-- Messages -->
+  <bpmn:message id="Message_TransactionSuccess" name="TransactionSuccessMessage" />
+  <bpmn:message id="Message_TransactionFailure" name="TransactionFailureMessage" />
+  
+  <!-- Errors -->
+  <bpmn:error id="Error_TransactionFailed" name="TransactionFailedError" errorCode="TRANSACTION_FAILED" />
+  
+</bpmn:definitions>
