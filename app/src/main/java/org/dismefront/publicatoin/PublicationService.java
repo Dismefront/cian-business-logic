@@ -1,5 +1,6 @@
 package org.dismefront.publicatoin;
 
+import com.rosreestr.RRConnectionFactoryImpl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.dismefront.order.OrderPlacement;
@@ -15,6 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.sql.Date;
 import java.util.Objects;
 
@@ -40,6 +45,16 @@ public class PublicationService {
     @Autowired
     private AIModerationService aiModerationService;
 
+    @Autowired(required = false)
+    private Socket socket;
+
+    public String sendRRMessage(String message) throws Exception{
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out.println(message);
+        return in.readLine();
+    }
+
     public OrderPlacement createPublication(CreatePublicationRequest request, String username) {
         OrderPlacement orderPlacement = null;
         Publication publication = new Publication();
@@ -57,6 +72,11 @@ public class PublicationService {
         publication.setIsApproved(false);
 
         Publication savedPublication = publicationRepository.save(publication);
+        try {
+            sendRRMessage("New publication created with ID: " + savedPublication.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         PublicationPriority priority = Objects.nonNull(request.getPaymentRequest()) ? request.getPaymentRequest().getRequestedPriority() : null;
         if (priority != null && priority != PublicationPriority.STANDARD) {

@@ -1,0 +1,36 @@
+{
+  "components": [
+    {
+      "label": "Выберите способ аутентификации",
+      "values": [
+        {
+          "label": "Авторизоваться",
+          "value": "login"
+        },
+        {
+          "label": "Создать новый аккаунт",
+          "value": "register"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_0uqxh9r",
+        "columns": null
+      },
+      "id": "Field_1vrded5",
+      "key": "radio_x77b5e",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default",
+  "id": "Form_0ofxjth",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.23.0",
+  "schemaVersion": 18
+}

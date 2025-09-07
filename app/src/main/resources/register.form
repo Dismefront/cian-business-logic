@@ -1,0 +1,43 @@
+{
+  "components": [
+    {
+      "label": "Phone number",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1wcjjms",
+        "columns": null
+      },
+      "id": "Field_18ddhde",
+      "key": "textfield_grqli"
+    },
+    {
+      "label": "Password",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0kkubyp",
+        "columns": null
+      },
+      "id": "Field_1827zlq",
+      "key": "textfield_mkebwc"
+    },
+    {
+      "label": "Repeat password",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0ab6xvz",
+        "columns": null
+      },
+      "id": "Field_09hy6lm",
+      "key": "textfield_qvif8xj"
+    }
+  ],
+  "type": "default",
+  "id": "Form_register",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.23.0",
+  "schemaVersion": 18
+}

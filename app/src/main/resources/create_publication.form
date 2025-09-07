@@ -1,0 +1,176 @@
+{
+  "components": [
+    {
+      "label": "Publication type",
+      "values": [
+        {
+          "label": "Monthly rent",
+          "value": "MONTHLY_RENT"
+        },
+        {
+          "label": "Daily rent",
+          "value": "DAILY_RENT"
+        },
+        {
+          "label": "Sell",
+          "value": "SELL"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_1ejxst4",
+        "columns": null
+      },
+      "id": "Field_1fw0hoc",
+      "key": "select_33nnt6",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "SELL"
+    },
+    {
+      "label": "Real estate type",
+      "values": [
+        {
+          "label": "APARTMENT",
+          "value": "APARTMENT"
+        },
+        {
+          "label": "HOUSE",
+          "value": "HOUSE"
+        },
+        {
+          "label": "ROOM",
+          "value": "ROOM"
+        },
+        {
+          "label": "SLEEPING_BED",
+          "value": "SLEEPING_BED"
+        },
+        {
+          "label": "OFFICE",
+          "value": "OFFICE"
+        },
+        {
+          "label": "BUILDING",
+          "value": "BUILDING"
+        },
+        {
+          "label": "STORAGE",
+          "value": "STORAGE"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_1ejxst4",
+        "columns": null
+      },
+      "id": "Field_0he9msm",
+      "key": "select_nv4eck",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "HOUSE"
+    },
+    {
+      "label": "city id",
+      "type": "number",
+      "layout": {
+        "row": "Row_1wps634",
+        "columns": null
+      },
+      "id": "Field_0etp2y5",
+      "key": "number_6c72j",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": 4
+    },
+    {
+      "label": "District",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1wps634",
+        "columns": null
+      },
+      "id": "Field_0z41cg5",
+      "key": "textfield_0kxkni",
+      "defaultValue": "Rubinstein st."
+    },
+    {
+      "label": "Building number",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0wu1p5g",
+        "columns": null
+      },
+      "id": "Field_0b2z4u2",
+      "key": "textfield_zirokq",
+      "defaultValue": "148B"
+    },
+    {
+      "label": "Apartment floor",
+      "type": "number",
+      "layout": {
+        "row": "Row_0wu1p5g",
+        "columns": null
+      },
+      "id": "Field_0bu8fiy",
+      "key": "number_t187it",
+      "defaultValue": 10
+    },
+    {
+      "label": "Building floor number",
+      "type": "number",
+      "layout": {
+        "row": "Row_1rh4qt0",
+        "columns": null
+      },
+      "id": "Field_1auzebb",
+      "key": "number_x97qz",
+      "defaultValue": 999
+    },
+    {
+      "label": "Apartment number",
+      "type": "number",
+      "layout": {
+        "row": "Row_1rh4qt0",
+        "columns": null
+      },
+      "id": "Field_1brn0qf",
+      "key": "number_9dtall",
+      "defaultValue": 34
+    },
+    {
+      "label": "living area",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1pzzkuc",
+        "columns": null
+      },
+      "id": "Field_04zclz6",
+      "key": "textfield_dkafwr",
+      "properties": {},
+      "defaultValue": "122.44"
+    },
+    {
+      "label": "Pay for publication",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_1nru5z8",
+        "columns": null
+      },
+      "id": "Field_132arzk",
+      "key": "checkbox_jnp3uh"
+    }
+  ],
+  "type": "default",
+  "id": "Form_0qng8ym",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.23.0",
+  "schemaVersion": 18
+}
