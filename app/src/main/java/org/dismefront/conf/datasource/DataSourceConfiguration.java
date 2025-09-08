@@ -22,7 +22,7 @@ public class DataSourceConfiguration {
         AtomikosDataSourceBean xaDataSource = new AtomikosDataSourceBean();
         xaDataSource.setXaDataSource(pgXa);
         xaDataSource.setUniqueResourceName("xa_postgres");
-        xaDataSource.setPoolSize(5);
+        xaDataSource.setPoolSize(20);
 
         return xaDataSource;
     }

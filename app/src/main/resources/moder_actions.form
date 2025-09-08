@@ -1,0 +1,43 @@
+{
+  "components": [
+    {
+      "label": "Заблокировать пользователя по id",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0clh4ul",
+        "columns": null
+      },
+      "id": "Field_02xqf3n",
+      "key": "textfield_6fo67"
+    },
+    {
+      "label": "Подтвердить публикацию по id",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_08y4jmm",
+        "columns": null
+      },
+      "id": "Field_0mbdq2x",
+      "key": "textfield_b2abjs"
+    },
+    {
+      "label": "Отклонить публикацию по id",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1m7t6na",
+        "columns": null
+      },
+      "id": "Field_0wa3z4p",
+      "key": "textfield_zwqta"
+    }
+  ],
+  "type": "default",
+  "id": "Form_0xj4sed",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.23.0",
+  "schemaVersion": 18
+}
