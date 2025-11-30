@@ -1,0 +1,23 @@
+{
+  "components": [
+    {
+      "label": "Введите сумму платежа",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_03t8z42",
+        "columns": null
+      },
+      "id": "Field_0rp3hu2",
+      "key": "textfield_vvcvr"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1yc58zc",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.23.0",
+  "schemaVersion": 18
+}

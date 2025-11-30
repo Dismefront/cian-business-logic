@@ -58,7 +58,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                         (requests) ->
                                 requests
-                                        .requestMatchers("/api/users/register", "/api/users/login")
+                                        .requestMatchers("/api/users/register", "/api/users/login", "/camunda/**")
                                         .permitAll()
                                         .anyRequest()
                                         .authenticated())

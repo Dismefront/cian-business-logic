@@ -10,7 +10,8 @@ import java.util.Random;
 public class AIModerationService {
 
     public Boolean moderatePublication(Publication publication) {
-        return new Random().nextBoolean();
+        boolean res = new Random().nextBoolean();
+        return res;
     }
 
 }

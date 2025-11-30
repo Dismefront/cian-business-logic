@@ -1,0 +1,34 @@
+{
+  "components": [
+    {
+      "label": "Choose plan",
+      "values": [
+        {
+          "label": "VIP",
+          "value": "VIP"
+        },
+        {
+          "label": "PREMIUM",
+          "value": "PREMIUM"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_0m9faf6",
+        "columns": null
+      },
+      "id": "Field_100igel",
+      "key": "select_zpmxii",
+      "defaultValue": "VIP"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1xl0aoe",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.23.0",
+  "schemaVersion": 18
+}
